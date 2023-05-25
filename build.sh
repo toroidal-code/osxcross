@@ -318,28 +318,28 @@ fi
 
 if [ $I386_SUPPORTED -eq 1 ]; then
   test_compiler i386-apple-$TARGET-clang $BASE_DIR/oclang/test.c "required"
-  test_compiler i386-apple-$TARGET-clang++ $BASE_DIR/oclang/test.cpp "required"
+  test_compiler_cxx11 i386-apple-$TARGET-clang++ $BASE_DIR/oclang/test.cpp "required"
   echo ""
 fi
 
 if [ $X86_64H_SUPPORTED -eq 1 ]; then
   test_compiler x86_64h-apple-$TARGET-clang $BASE_DIR/oclang/test.c
-  test_compiler x86_64h-apple-$TARGET-clang++ $BASE_DIR/oclang/test.cpp
+  test_compiler_cxx11 x86_64h-apple-$TARGET-clang++ $BASE_DIR/oclang/test.cpp
   echo ""
 fi
 
 if [ $ARM_SUPPORTED -eq 1 ]; then
   test_compiler arm64-apple-$TARGET-clang $BASE_DIR/oclang/test.c
-  test_compiler arm64-apple-$TARGET-clang++ $BASE_DIR/oclang/test.cpp
+  test_compiler_cxx11 arm64-apple-$TARGET-clang++ $BASE_DIR/oclang/test.cpp
   echo ""
 
   test_compiler arm64e-apple-$TARGET-clang $BASE_DIR/oclang/test.c
-  test_compiler arm64e-apple-$TARGET-clang++ $BASE_DIR/oclang/test.cpp
+  test_compiler_cxx11 arm64e-apple-$TARGET-clang++ $BASE_DIR/oclang/test.cpp
   echo ""
 fi
 
 test_compiler x86_64-apple-$TARGET-clang $BASE_DIR/oclang/test.c "required"
-test_compiler x86_64-apple-$TARGET-clang++ $BASE_DIR/oclang/test.cpp "required"
+test_compiler_cxx11 x86_64-apple-$TARGET-clang++ $BASE_DIR/oclang/test.cpp "required"
 
 echo ""
 echo "Do not forget to add"

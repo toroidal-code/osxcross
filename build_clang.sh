@@ -47,16 +47,18 @@ function set_package_link()
   rm -f $DOWNLOAD_PAGE
   LLVM_PKG=$(echo "$links" | grep "llvm-$CLANG_VERSION.src" | head -n 1 || true)
   CLANG_PKG=$(echo "$links" | grep -E "(clang|cfe)-$CLANG_VERSION.src" | head -n 1 || true)
+  CMAKE_PKG=$(echo "$links" | grep -E "cmake-$CLANG_VERSION.src" | head -n 1 || true)
   if [ -n "$LLVM_PKG" ] && [[ $LLVM_PKG != https* ]]; then
       LLVM_PKG=$(echo $LLVM_PKG | cut -d\: -f 2- | tr -d \")
       CLANG_PKG=$(echo $CLANG_PKG | cut -d\: -f 2- | tr -d \")
+      CMAKE_PKG=$(echo $CMAKE_PKG | cut -d\: -f 2- | tr -d \")
   fi
   popd &>/dev/null
 }
 
 set_package_link
 
-if [ -z "$LLVM_PKG" ] || [ -z "$CLANG_PKG" ]; then
+if [ -z "$LLVM_PKG" ] || [ -z "$CLANG_PKG" ] || [ -z "$CMAKE_PKG" ]; then
   echo "Release $CLANG_VERSION not found!" 1>&2
   exit 1
 fi
@@ -94,6 +96,8 @@ pushd $TARBALL_DIR &>/dev/null
 
 download $LLVM_PKG
 download $CLANG_PKG
+download $CMAKE_PKG
+# download $THIRD_PARTY_PKG
 
 popd &>/dev/null
 
@@ -103,6 +107,9 @@ pushd $BUILD_DIR &>/dev/null
 echo "cleaning up ..."
 
 rm -rf llvm* 2>/dev/null
+
+extract "$TARBALL_DIR/$(basename $CMAKE_PKG)"
+[ -e cmake* ] && mv cmake* cmake
 
 extract "$TARBALL_DIR/$(basename $LLVM_PKG)"
 
@@ -127,7 +134,9 @@ function build()
     -DCMAKE_INSTALL_PREFIX=$INSTALLPREFIX \
     -DCMAKE_BUILD_TYPE=Release \
     -DLLVM_ENABLE_ASSERTIONS=OFF \
-    -DLLVM_TEMPORARILY_ALLOW_OLD_TOOLCHAIN=1
+    -DLLVM_TEMPORARILY_ALLOW_OLD_TOOLCHAIN=1 \
+    -DLLVM_INCLUDE_TESTS=OFF \
+    -DLLVM_INCLUDE_BENCHMARKS=OFF
   $MAKE $2 -j $JOBS VERBOSE=1
   popd &>/dev/null
 }
